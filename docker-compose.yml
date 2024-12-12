@@ -1,0 +1,8 @@
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_PASSWORD: ${DB_ADM_PWD}
+    ports:
+      - "5432:5432"
