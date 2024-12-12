@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "github.com/a-korkin/notes_ms/common";
+
+message Note {
+    int32 id = 1;
+    string text = 2;
+}
+
+message NoteIn {
+    string text = 1;
+}
+
+message NoteId {
+    int32 id = 1;
+}
+
+service NoteService {
+    rpc AddNote(NoteIn) returns (Note);
+    rpc GetNote(NoteId) returns (Note);
+}
