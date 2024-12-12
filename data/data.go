@@ -31,3 +31,19 @@ func (dbConnect *DbConnect) GetNote(id int32) (*common.Note, error) {
 	}
 	return nil, nil
 }
+
+func (dbConnect *DbConnect) AddNote(in *common.NoteIn) (*common.Note, error) {
+	row, err := dbConnect.Db.Query(`
+insert into notes(text)
+values($1)
+returning id`, in.Text)
+	if err != nil {
+		return nil, err
+	}
+	if row.Next() {
+		note := common.Note{}
+		row.Scan(&note.Id, &note.Text)
+		return &note, nil
+	}
+	return nil, nil
+}

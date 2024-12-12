@@ -23,11 +23,12 @@ func NewServer(dbconn *data.DbConnect) *NoteServer {
 func (s *NoteServer) AddNote(
 	ctx context.Context, noteIn *pb.NoteIn) (*pb.Note, error) {
 	log.Printf("add note method called")
-	note := pb.Note{
-		Id:   1,
-		Text: "Note1",
+	note, err := s.dbConnect.AddNote(noteIn)
+	if err != nil {
+		log.Printf("failed to create note: %s", err)
+		return nil, err
 	}
-	return &note, nil
+	return note, err
 }
 
 func (s *NoteServer) GetNote(
