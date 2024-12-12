@@ -19,9 +19,15 @@ func NewDbConnect(connStr string) *DbConnect {
 	return &DbConnect{Db: db}
 }
 
-func GetNote(id int32) *common.Note {
-	return &common.Note{
-		Id:   id,
-		Text: "hello",
+func (dbConnect *DbConnect) GetNote(id int32) (*common.Note, error) {
+	row, err := dbConnect.Db.Query("select text from notes where id = $1", id)
+	if err != nil {
+		return nil, err
 	}
+	if row.Next() {
+		note := common.Note{Id: id}
+		row.Scan(&note.Text)
+		return &note, nil
+	}
+	return nil, nil
 }

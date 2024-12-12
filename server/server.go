@@ -5,19 +5,19 @@ import (
 	"log"
 	"net"
 
-	"database/sql"
 	pb "github.com/a-korkin/notes_ms/common"
+	"github.com/a-korkin/notes_ms/data"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
 type NoteServer struct {
 	pb.UnimplementedNoteServiceServer
-	db *sql.DB
+	dbConnect *data.DbConnect
 }
 
-func NewServer(dbConn *sql.DB) *NoteServer {
-	return &NoteServer{db: dbConn}
+func NewServer(dbconn *data.DbConnect) *NoteServer {
+	return &NoteServer{dbConnect: dbconn}
 }
 
 func (s *NoteServer) AddNote(
@@ -33,15 +33,12 @@ func (s *NoteServer) AddNote(
 func (s *NoteServer) GetNote(
 	ctx context.Context, noteId *pb.NoteId) (*pb.Note, error) {
 	log.Printf("get node method called")
-	query, err := s.db.Query("select id, text from public.notes")
+	note, err := s.dbConnect.GetNote(noteId.Id)
 	if err != nil {
-		log.Fatalf("failed to get note: %s", err)
+		log.Printf("failed to get note with id: %d", noteId.Id)
+		return nil, err
 	}
-	note := pb.Note{}
-	if query.Next() {
-		query.Scan(&note.Id, &note.Text)
-	}
-	return &note, nil
+	return note, nil
 }
 
 func (s *NoteServer) Run(address string) {
