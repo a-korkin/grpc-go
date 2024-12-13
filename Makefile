@@ -9,4 +9,4 @@ init_db:
 		-v DB_NAME=${DB_NAME} -v DB_USR=${DB_USR} -v DB_PWD=${DB_PWD} \
 		< ./scripts/init.sql
 run:
-	go run main.go
+	go run cmd/main.go
